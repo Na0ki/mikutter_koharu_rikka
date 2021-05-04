@@ -1,0 +1,9 @@
+---
+slug: :mikutter_koharu_rikka
+depends:
+  mikutter: 4.1.4
+  plugin: []
+version: '1.0.0'
+author: ahiru
+name: mikutter_koharu_rikka
+description: ゴボボボゴボゴボゴボゴボ
