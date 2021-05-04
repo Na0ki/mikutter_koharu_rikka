@@ -1,7 +1,10 @@
 # frozen_string_literal: true
 
 class Plugin::MikutterKoharuRikka
-  GOBOGOBOGOBO_EXCEPT = 'ー！？、。'.chars
+  GOBOGOBOGOBO_EXCEPT = [
+    /[ー！？、。\s]/,
+    /@\w+(?:@(?:[a-zA-Z\d\-]+\.)+[a-zA-Z\d\-]+)?/
+  ]
 end
 
 Plugin.create(:mikutter_koharu_rikka) do
@@ -30,18 +33,31 @@ Plugin.create(:mikutter_koharu_rikka) do
 
   # 変換ルールが判明するまでのハリボテ翻訳
   def gobogobonize(input)
-    chars = input.chars
+    excepts = Plugin::MikutterKoharuRikka::GOBOGOBOGOBO_EXCEPT.map do |ex|
+      ex.match(input)
+    end.compact.sort_by { |x| x.begin(0) }
+    i = 0
+    result = []
+    while(i < input.size)
+      if excepts&.first&.begin(0) == i
+        except = excepts.shift
+        result << except[0]
+        i = except.end(0)
+        excepts = [*excepts, except.regexp.match(input, i)].compact.sort_by { |x| x.begin(0) }
+      else
+        result << a = gobo(input[i], i)
+        i += 1
+      end
+    end
     [
-      go?(chars.first, 0) ? 'ゴ' : 'ボ',
-      *chars.map.with_index(&method(:gobo)),
-      *'ゴボ'.each_char.any?(gobo(chars.last, input.size - 1)) ? 'ボ' : nil
+      *(result.first == 'ボ' ? 'ゴ' : nil),
+      *result,
+      *(result.last == 'ゴ' ? 'ボ' : nil)
     ].join
   end
 
   def gobo(chr, i)
-    if Plugin::MikutterKoharuRikka::GOBOGOBOGOBO_EXCEPT.include?(chr)
-      chr
-    elsif go?(chr, i)
+    if go?(chr, i)
       'ゴ'
     else
       'ボ'
