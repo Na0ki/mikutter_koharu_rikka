@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+class Plugin::MikutterKoharuRikka
+  GOBOGOBOGOBO_EXCEPT = 'ー！？、。'.codepoints
+end
+
 Plugin.create(:mikutter_koharu_rikka) do
   command(
     :gobogobogobo,
@@ -26,8 +30,23 @@ Plugin.create(:mikutter_koharu_rikka) do
 
   # 変換ルールが判明するまでのハリボテ翻訳
   def gobogobonize(input)
-    resp = input.each_codepoint.to_a.map.with_index {|c, i| (c + i).even? ? 'ゴ' : 'ボ' }.join + 'ボ'
-    resp = 'ゴ' + resp if resp.start_with?('ボ')
-    resp
+    cps = input.codepoints
+    [
+      cps.first.odd? ? 'ゴ' : 'ボ',
+      *cps.map.with_index do |c, i|
+        gobo(c, i)
+      end,
+      *'ゴボ'.each_char.any?(gobo(cps.last, input.size - 1)) ? 'ボ' : nil
+    ].join
+  end
+
+  def gobo(c, i)
+    if Plugin::MikutterKoharuRikka::GOBOGOBOGOBO_EXCEPT.include?(c)
+      c.chr(Encoding::UTF_8)
+    elsif (c + i).even?
+      'ゴ'
+    else
+      'ボ'
+    end
   end
 end
