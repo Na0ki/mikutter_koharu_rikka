@@ -2,7 +2,7 @@
 
 class Plugin::MikutterKoharuRikka
   GOBOGOBOGOBO_EXCEPT = [
-    /[ー！？、。\s]/,
+    /[()（）ー！？、。\s]/,
     /@\w+(?:@(?:[a-zA-Z\d\-]+\.)+[a-zA-Z\d\-]+)?/
   ]
 end
