@@ -20,14 +20,14 @@ Plugin.create(:mikutter_koharu_rikka) do
 
     next if text.empty?
 
-    message = rand(100) < 5 ? kaharu_rikkanize : gobogobonize(text)
+    message = rand(100) < 5 ? koharu_rikkanize : gobogobonize(text)
 
     compose(opt.world, body: message)
     box.text = ''
   end
 
   # おしまい！
-  def kaharu_rikkanize
+  def koharu_rikkanize
     ['ドンドンドン！ぱふーっ！ぱふーっ！', 'アディオース！', 'そうだねー！そうなのよ（一人二役）'].sample
   end
 
