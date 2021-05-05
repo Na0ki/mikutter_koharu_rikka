@@ -28,7 +28,7 @@ Plugin.create(:mikutter_koharu_rikka) do
 
   # おしまい！
   def kaharu_rikkanize
-    ['ドンドンドン！ぱふーっ！ぱふーっ！', 'アディオース！', 'そうだねー！そうねのよ（一人二役）'].sample
+    ['ドンドンドン！ぱふーっ！ぱふーっ！', 'アディオース！', 'そうだねー！そうなのよ（一人二役）'].sample
   end
 
   # 変換ルールが判明するまでのハリボテ翻訳
@@ -45,7 +45,7 @@ Plugin.create(:mikutter_koharu_rikka) do
         i = except.end(0)
         excepts = [*excepts, except.regexp.match(input, i)].compact.sort_by { |x| x.begin(0) }
       else
-        result << a = gobo(input[i], i)
+        result << gobo(input[i], i)
         i += 1
       end
     end
