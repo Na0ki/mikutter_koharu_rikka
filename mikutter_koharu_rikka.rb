@@ -1,30 +1,10 @@
 # frozen_string_literal: true
 
-class Plugin::MikutterKoharuRikka
+class MikutterKoharuRikka
   GOBOGOBOGOBO_EXCEPT = [
     /[()（）ー！？、。\s]/,
     /@\w+(?:@(?:[a-zA-Z\d\-]+\.)+[a-zA-Z\d\-]+)?/
   ]
-end
-
-Plugin.create(:mikutter_koharu_rikka) do
-  command(
-    :gobogobogobo,
-    name: 'ゴボボゴボゴボゴボボボボ',
-    condition: lambda { |opt| true },
-    visible: true,
-    role: :postbox
-  ) do |opt|
-    box = Plugin[:gtk].widgetof(opt.widget).widget_post.buffer
-    text = box.text.strip
-
-    next if text.empty?
-
-    message = rand(100) < 5 ? koharu_rikkanize : gobogobonize(text)
-
-    compose(opt.world, body: message)
-    box.text = ''
-  end
 
   # おしまい！
   def koharu_rikkanize
@@ -33,7 +13,7 @@ Plugin.create(:mikutter_koharu_rikka) do
 
   # 変換ルールが判明するまでのハリボテ翻訳
   def gobogobonize(input)
-    excepts = Plugin::MikutterKoharuRikka::GOBOGOBOGOBO_EXCEPT.map do |ex|
+    excepts = GOBOGOBOGOBO_EXCEPT.map do |ex|
       ex.match(input)
     end.compact.sort_by { |x| x.begin(0) }
     i = 0
@@ -70,5 +50,26 @@ Plugin.create(:mikutter_koharu_rikka) do
 
   def bo?(chr, i)
     !go?(chr, i)
+  end
+end
+
+Plugin.create(:mikutter_koharu_rikka) do
+  command(
+    :gobogobogobo,
+    name: 'ゴボボゴボゴボゴボボボボ',
+    condition: lambda { |opt| true },
+    visible: true,
+    role: :postbox
+  ) do |opt|
+    box = Plugin[:gtk].widgetof(opt.widget).widget_post.buffer
+    text = box.text.strip
+
+    next if text.empty?
+
+    小春六花 = MikutterKoharuRikka.new
+    message = rand(100) < 5 ? 小春六花.koharu_rikkanize : 小春六花.gobogobonize(text)
+
+    compose(opt.world, body: message)
+    box.text = ''
   end
 end
